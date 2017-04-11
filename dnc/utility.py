@@ -29,7 +29,7 @@ def pairwise_add(u, v=None, is_batch=False):
     else:
         v_shape = v.get_shape().as_list()
         if u_shape != v_shape:
-            raise VauleError("Shapes %s and %s do not match" % (u_shape, v_shape))
+            raise ValueError("Shapes %s and %s do not match" % (u_shape, v_shape))
 
     n = u_shape[0] if not is_batch else u_shape[1]
 
@@ -85,7 +85,7 @@ def unpack_into_tensorarray(value, axis, size=None):
         raise ValueError("Can't create TensorArray with size None")
 
     array = tf.TensorArray(dtype=dtype, size=array_size)
-    dim_permutation = [axis] + range(1, axis) + [0] + range(axis + 1, rank)
+    dim_permutation = [axis] + list(range(1, axis)) + [0] + list(range(axis + 1, rank))
     unpack_axis_major_value = tf.transpose(value, dim_permutation)
     full_array = array.unstack(unpack_axis_major_value)
 
@@ -110,7 +110,7 @@ def pack_into_tensor(array, axis):
     shape = packed_tensor.get_shape()
     rank = len(shape)
 
-    dim_permutation = [axis] + range(1, axis) + [0]  + range(axis + 1, rank)
+    dim_permutation = [axis] + list(range(1, axis)) + [0]  + list(range(axis + 1, rank))
     correct_shape_tensor = tf.transpose(packed_tensor, dim_permutation)
 
     return correct_shape_tensor
